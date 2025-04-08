@@ -15,9 +15,13 @@ class OrderDetailFactory extends Factory
      * @return array<string, mixed>
      */
     public function definition(): array
-    {
-        return [
-            //
-        ];
-    }
+{
+    return [
+        'order_id' => \App\Models\Order::factory(),
+        'product_id' => \App\Models\Product::factory(),
+        'quantity' => $this->faker->numberBetween(1, 5),
+        'notes' => $this->faker->optional()->sentence,
+    ];
+}
+
 }

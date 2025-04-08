@@ -15,9 +15,14 @@ class ProductFactory extends Factory
      * @return array<string, mixed>
      */
     public function definition(): array
-    {
-        return [
-            //
-        ];
-    }
+{
+    return [
+        'name' => $this->faker->word,
+        'image' => $this->faker->imageUrl(),
+        'price' => $this->faker->randomFloat(2, 10, 500),
+        'quantity' => $this->faker->numberBetween(1, 100),
+        'description' => $this->faker->paragraph,
+    ];
+}
+
 }
