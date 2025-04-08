@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
+<<<<<<< Updated upstream
+=======
+            $table->enum('name', ['admin', 'manager', 'leader', 'member'])->default('member');
+            $table->text('description')->nullable();
+>>>>>>> Stashed changes
             $table->timestamps();
         });
     }
