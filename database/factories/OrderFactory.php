@@ -15,9 +15,12 @@ class OrderFactory extends Factory
      * @return array<string, mixed>
      */
     public function definition(): array
-    {
-        return [
-            //
-        ];
-    }
+{
+    return [
+        'user_id' => \App\Models\User::factory(),
+        'total_amount' => $this->faker->randomFloat(2, 50, 2000),
+        'address' => $this->faker->address,
+    ];
+}
+
 }
