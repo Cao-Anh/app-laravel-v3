@@ -23,16 +23,11 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $portrait=['portrait1.jpg','portrait2.jpg','portrait3.jpg','portrait4.jpg','default-image.png'];
-        $imageName = $portrait[array_rand($portrait)];
         return [
             'username' => fake()->unique()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'photo' => 'images/'.$imageName,
-            'description' => fake()->text(200), 
-            'role' => fake()->randomElement(['member', 'admin']), 
+            'password' => static::$password ??= Hash::make('1234A'),
             'remember_token' => Str::random(10),
         ];
     }
