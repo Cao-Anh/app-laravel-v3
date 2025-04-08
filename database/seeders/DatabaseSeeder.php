@@ -7,7 +7,6 @@ use App\Models\Role;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use App\Models\UserRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,6 +19,9 @@ class DatabaseSeeder extends Seeder
     {
         // Create 100 roles
         Role::factory(100)->create();
+
+        // Make sure 'admin' role exists
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
         // Create 100 users
         User::factory(100)->create();
@@ -43,5 +45,15 @@ class DatabaseSeeder extends Seeder
             'order_id' => Order::inRandomOrder()->first()->id,
             'product_id' => Product::inRandomOrder()->first()->id,
         ]);
+
+        // Create a specific admin user
+        $adminUser = User::factory()->create([
+            'username' => 'admin',
+            'email' => 'dangcaoanh1998@gmail.com',
+            'password' => Hash::make('password'), // change this to a secure password
+        ]);
+
+        // Attach the 'admin' role to the user
+        $adminUser->roles()->attach($adminRole->id);
     }
 }
