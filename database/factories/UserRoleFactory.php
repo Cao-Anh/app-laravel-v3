@@ -15,9 +15,11 @@ class UserRoleFactory extends Factory
      * @return array<string, mixed>
      */
     public function definition(): array
-    {
-        return [
-            //
-        ];
-    }
+{
+    return [
+        'user_id' => \App\Models\User::factory(),
+        'role_id' => \App\Models\Role::factory(),
+    ];
+}
+
 }
