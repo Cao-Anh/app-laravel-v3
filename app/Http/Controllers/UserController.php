@@ -33,8 +33,7 @@ class UserController extends Controller
     $request->validate([
         'username' => 'required|string|min:3|max:8',
         'email' => 'required|email|unique:users,email,' . $id,
-        'description' => 'nullable|string',
-        'photo' => 'nullable|mimes:jpeg,png,jpg,gif|max:2048' 
+        
     ]);
 
     $user = User::findOrFail($id);
@@ -56,7 +55,6 @@ class UserController extends Controller
     $user->update([
         'username' => $request->username,
         'email' => $request->email,
-        'description' => $request->description,
     ]);
 
     $user->save(); 
