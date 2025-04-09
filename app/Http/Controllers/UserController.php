@@ -45,27 +45,17 @@ class UserController extends Controller
 
     $user = User::findOrFail($id);
 
-    if ($request->hasFile('photo')) {
-        // dd($request->file('photo'));
-        $file = $request->file('photo');
+    // if ($request->hasFile('photo')) {
+    //     // dd($request->file('photo'));
+    //     $file = $request->file('photo');
+
+    //     $imageName = time().'.'.$request->photo->extension();  
+
+    //     $request->photo->move(public_path('images'), $imageName);
+    //     $photoUrl= 'images/'. $imageName;
     
-        // $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        // $timestamp = now()->timestamp;
-        // $extension = $file->getClientOriginalExtension();
-        // $uniqueFilename = $filename . '_' . $timestamp . '.' . $extension;
-    
-        // $photoPath = $file->storeAs('users', $uniqueFilename, 'public');
-        // $photoUrl = 'storage/users/' . $uniqueFilename; 
-
-
-
-        $imageName = time().'.'.$request->photo->extension();  
-
-        $request->photo->move(public_path('images'), $imageName);
-        $photoUrl= 'images/'. $imageName;
-    
-        $user->photo = $photoUrl;
-    }
+    //     $user->photo = $photoUrl;
+    // }
     
     
 
