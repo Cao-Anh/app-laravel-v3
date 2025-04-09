@@ -17,8 +17,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create 100 roles
-        Role::factory(100)->create();
+        // Create 4 roles
+        $roles = [
+            ['name' => 'admin', 'description' => 'Has full access to the system.'],
+            ['name' => 'manager', 'description' => 'Manages teams and projects.'],
+            ['name' => 'leader', 'description' => 'Leads and supervises members.'],
+            ['name' => 'member', 'description' => 'Standard user access.'],
+        ];
+
+        foreach ($roles as $role) {
+            Role::create($role);
+        }
 
         // Make sure 'admin' role exists
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
@@ -50,7 +59,7 @@ class DatabaseSeeder extends Seeder
         $adminUser = User::factory()->create([
             'username' => 'admin',
             'email' => 'dangcaoanh1998@gmail.com',
-            'password' => Hash::make('password'), // change this to a secure password
+            'password' => Hash::make('1234A'), // change this to a secure password
         ]);
 
         // Attach the 'admin' role to the user
