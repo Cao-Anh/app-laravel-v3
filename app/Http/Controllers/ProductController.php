@@ -20,6 +20,46 @@ class ProductController extends Controller
         return view('products.show', compact('product'));
     }
 
+    public function create()
+    {
+        return view('products.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'description' => 'nullable|string',
+        ]);
+
+        $product = new Product();
+        $product->name = $request->name;
+        $product->price = $request->price;
+        $product->quantity = $request->quantity;
+        $product->description = $request->description;
+        
+
+        if ($request->hasFile('image')) {
+            // dd($request->file('photo'));
+            $file = $request->file('image');
+
+            $imageName = time() . '.' . $request->image->extension();
+
+            $request->image->move(public_path('images'), $imageName);
+            $imageUrl = 'images/' . $imageName;
+
+            $product->image = $imageUrl;
+
+            
+        }
+        $product->save();
+        return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công.');
+
+    }
+
     public function edit($id)
     {
         $product = Product::findOrFail($id);
@@ -50,10 +90,10 @@ class ProductController extends Controller
         }
 
         $product->update([
-            'name'=>$request->name,
-            'price'=>$request->price,
-            'quantity'=>$request->quantity,
-            'description'=>$request->description,
+            'name' => $request->name,
+            'price' => $request->price,
+            'quantity' => $request->quantity,
+            'description' => $request->description,
         ]);
 
         $product->save();
@@ -61,8 +101,8 @@ class ProductController extends Controller
     }
 
     public function destroy(Request $request, $id)
-    {   
-       
+    {
+
         $product = Product::findOrFail($id);
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Xóa thành công.');
