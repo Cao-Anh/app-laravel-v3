@@ -21,6 +21,32 @@ class UserController extends Controller
         return view('users.show', compact('user'));
     }
 
+    public function create()
+{
+
+    return view('users.create');
+}
+
+public function store(Request $request)
+{
+    $request->validate([
+        'username' => 'required|string|min:3|max:8|unique:users,username',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|min:6|confirmed',
+        
+    ]);
+
+    
+    $user = new User();
+    $user->username = $request->username;
+    $user->email = $request->email;
+    $user->password = bcrypt($request->password); // Never forget to hash passwords!
+    $user->save();
+
+    return redirect()->route('users.index')->with('success', 'Tạo người dùng thành công.');
+}
+
+
     public function edit($id)
     {   
         
