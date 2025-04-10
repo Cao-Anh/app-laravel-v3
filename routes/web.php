@@ -75,7 +75,8 @@ Route::middleware('auth')->group(function () {
     //     return view('dashboard');
     // })->name('dashboard');
     Route::resource('users', UserController::class);
+    Route::get('/', [UserController::class, 'index'])->name('users.index');
+
 
     Route::resource('products', ProductController::class);
- 
 });

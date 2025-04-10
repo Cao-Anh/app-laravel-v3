@@ -6,10 +6,10 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
-{
-
+{   
     public function index()
     {
         $users = User::paginate(10);
@@ -23,14 +23,17 @@ class UserController extends Controller
     }
 
     public function create()
-    {
+    {       
+        Gate::authorize('create',User::class);
         $roles = Role::all();
         return view('users.create', compact('roles'));
     }
 
 
-    public function store(Request $request)
+    public function store(Request $request)     
     {
+        Gate::authorize('create',User::class);
+
         $request->validate([
             'username' => 'required|string|min:3|max:8|unique:users,username',
             'email' => 'required|email|unique:users,email',
@@ -55,21 +58,25 @@ class UserController extends Controller
 
 
     public function edit($id)
-    {
-
+    {   
         $user = User::findOrFail($id);
+        $authUser = Auth::user();
+        Gate::authorize('update', $authUser, $user );
+       
         return view('users.edit', compact('user'));
     }
 
     public function update(Request $request, $id)
     {
+        $user = User::findOrFail($id);
+        $authUser = Auth::user();
+        Gate::authorize('update', $authUser, $user );
         $request->validate([
             'username' => 'required|string|min:3|max:8',
             'email' => 'required|email|unique:users,email,' . $id,
 
         ]);
 
-        $user = User::findOrFail($id);
 
         // if ($request->hasFile('photo')) {
         //     // dd($request->file('photo'));
@@ -100,6 +107,8 @@ class UserController extends Controller
     {
 
         $user = User::findOrFail($id);
+        $authUser = Auth::user();
+        Gate::authorize('delete', $authUser, $user );
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Xóa thành công.');
     }

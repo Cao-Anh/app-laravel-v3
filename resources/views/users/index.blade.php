@@ -17,9 +17,11 @@
                         <td>{{ $user->username }}</td>
                         <td>{{ $user->email }}</td>
                         <td>
-                            <button class="index-button" style="background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;" onclick="window.location.href='{{ route('users.show', $user->id) }}'">Xem</button>
-                            
-                            @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->id == $user->id))
+                            <button class="index-button"
+                                style="background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                onclick="window.location.href='{{ route('users.show', $user->id) }}'">Xem</button>
+
+                            {{-- @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->id == $user->id))
                                 <button class="index-button" style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;" onclick="window.location.href='{{ route('users.edit', $user->id) }}'">Sửa</button>
                             @endif
 
@@ -30,7 +32,21 @@
                                     <button type="submit" class="index-button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
                                         onclick="return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</button>
                                 </form>
-                            @endif
+                            @endif --}}
+                            @can('update', auth()->user())
+                                <button class="index-button"
+                                    style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                    onclick="window.location.href='{{ route('users.edit', $user->id) }}'">Sửa</button>
+                            @endcan
+                            @can('update', auth()->user())
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="index-button"
+                                        style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</button>
+                                </form>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach
