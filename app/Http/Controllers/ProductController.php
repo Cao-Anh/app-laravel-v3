@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use PhpParser\Node\Expr\FuncCall;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -22,11 +24,15 @@ class ProductController extends Controller
 
     public function create()
     {
+        Gate::authorize('create', Product::class);
+
         return view('products.create');
     }
 
     public function store(Request $request)
     {
+        Gate::authorize('create', Product::class);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -62,12 +68,20 @@ class ProductController extends Controller
 
     public function edit($id)
     {
+        Gate::authorize('update', Product::class);
+
+        // $user = User::findOrFail($id);
+        // $authUser = Auth::user();
+        // Gate::authorize('update', $authUser, $user );
+
         $product = Product::findOrFail($id);
         return view('products.edit', compact('product'));
     }
 
     public function update(Request $request, $id)
     {
+        Gate::authorize('update', Product::class);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -102,6 +116,7 @@ class ProductController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        Gate::authorize('delete', Product::class);
 
         $product = Product::findOrFail($id);
         $product->delete();
