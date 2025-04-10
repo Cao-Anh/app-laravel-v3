@@ -32,7 +32,7 @@ class ProductController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
-            'description' => 'nullable|string',
+            'description' => 'require|string',
         ]);
 
         $product = new Product();
@@ -73,7 +73,7 @@ class ProductController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
-            'description' => 'nullable|string',
+            'description' => 'require|string',
         ]);
         $product = Product::findOrFail($id);
 
