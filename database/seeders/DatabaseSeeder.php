@@ -46,14 +46,17 @@ class DatabaseSeeder extends Seeder
 
         // Create 100 orders randomly assigned to users
         Order::factory(100)->create([
-            'user_id' => User::inRandomOrder()->first()->id,
+            // 'user_id' => User::inRandomOrder()->first()->id,
+            'user_id' => fn() => User::inRandomOrder()->first()->id,
+
         ]);
 
         // Create 100 order details, randomly assigned to orders & products
         OrderDetail::factory(100)->create([
-            'order_id' => Order::inRandomOrder()->first()->id,
-            'product_id' => Product::inRandomOrder()->first()->id,
+            'order_id' => fn() => Order::inRandomOrder()->first()->id,
+            'product_id' => fn() => Product::inRandomOrder()->first()->id,
         ]);
+
 
         // Create a specific admin user
         $adminUser = User::factory()->create([
