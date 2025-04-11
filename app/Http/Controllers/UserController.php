@@ -121,4 +121,13 @@ class UserController extends Controller
 
         return view('users.top_buy_time', compact('users'));
     }
+
+    public function getTopSpendUsers()
+    {
+        $users = User::withSum('orders as total_spent', 'total_amount')
+            ->orderByDesc('total_spent')
+            ->paginate(10);
+
+        return view('users.top_spend', compact('users'));
+    }
 }
