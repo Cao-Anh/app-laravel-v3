@@ -8,18 +8,21 @@
                 <tr>
                     <th>Người dùng</th>
                     <th>Email</th>
+                    <th>Tổng SL mua</th>
                     <th>Lệnh</th>
                 </tr>
             </thead>
+
             <tbody>
                 @foreach ($users as $user)
                     <tr>
                         <td>{{ $user->username }}</td>
                         <td>{{ $user->email }}</td>
+                        <td>{{ $user->total_quantity ?? 0 }}</td>
                         <td>
                             <button class="index-button"
                                 style="background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                                onclick="window.location.href='{{ route('users.show', $user->id) }}'">Xem</button>              
+                                onclick="window.location.href='{{ route('users.show', $user->id) }}'">Xem</button>
                             @can('update', auth()->user())
                                 <button class="index-button"
                                     style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
@@ -38,6 +41,7 @@
                     </tr>
                 @endforeach
             </tbody>
+
         </table>
 
         <!-- Pagination -->

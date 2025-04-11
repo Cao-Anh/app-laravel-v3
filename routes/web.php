@@ -74,8 +74,11 @@ Route::middleware('auth')->group(function () {
     // Route::get('/dashboard', function () {
     //     return view('dashboard');
     // })->name('dashboard');
-    Route::resource('users', UserController::class);
     Route::get('/', [UserController::class, 'index'])->name('users.index');
+    Route::get('users/top-buy-time',[UserController::class, 'getTopBuyTimeUsers'])->name('users.top_buy_time');
+    Route::resource('users', UserController::class);
+   
+   
 
 
     Route::resource('products', ProductController::class);

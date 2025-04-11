@@ -46,15 +46,26 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+
     public function roles()
     {
-        return $this->belongsToMany(Role::class,'user_role');
+        return $this->belongsToMany(Role::class, 'user_role');
     }
 
     public function orders()
     {
-         return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class);
+    }
 
+    public function orderDetails()
+    {
+        return $this->hasManyThrough(
+            \App\Models\OrderDetail::class,
+            \App\Models\Order::class,
+            'user_id',       // Foreign key on orders table
+            'order_id',      // Foreign key on order_details table
+            'id',            // Local key on users table
+            'id'             // Local key on orders table
+        );
     }
 }
