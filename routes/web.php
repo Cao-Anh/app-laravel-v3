@@ -77,7 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('users.index');
     Route::get('users/top-buy-time',[UserController::class, 'getTopBuyTimeUsers'])->name('users.top_buy_time');
     Route::get('users/top-spend',[UserController::class, 'getTopSpendUsers'])->name('users.top_spend');
-    Route::get('users/no-orders',[UserController::class, 'getNoOrderUsers'])->name('users.no_orders');
+    Route::get('users/no-orders',[UserController::class, 'getNoOrderUsers'])->name('users.index');
 
 
     Route::resource('users', UserController::class);
