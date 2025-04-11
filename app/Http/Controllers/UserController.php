@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
-{   
+{
     public function index()
     {
         $users = User::paginate(10);
@@ -23,16 +23,16 @@ class UserController extends Controller
     }
 
     public function create()
-    {       
-        Gate::authorize('create',User::class);
+    {
+        Gate::authorize('create', User::class);
         $roles = Role::all();
         return view('users.create', compact('roles'));
     }
 
 
-    public function store(Request $request)     
+    public function store(Request $request)
     {
-        Gate::authorize('create',User::class);
+        Gate::authorize('create', User::class);
 
         $request->validate([
             'username' => 'required|string|min:3|max:8|unique:users,username',
@@ -58,11 +58,11 @@ class UserController extends Controller
 
 
     public function edit($id)
-    {   
+    {
         $user = User::findOrFail($id);
         $authUser = Auth::user();
-        Gate::authorize('update', $authUser, $user );
-       
+        Gate::authorize('update', $authUser, $user);
+
         return view('users.edit', compact('user'));
     }
 
@@ -70,7 +70,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $authUser = Auth::user();
-        Gate::authorize('update', $authUser, $user );
+        Gate::authorize('update', $authUser, $user);
         $request->validate([
             'username' => 'required|string|min:3|max:8',
             'email' => 'required|email|unique:users,email,' . $id,
@@ -108,8 +108,17 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
         $authUser = Auth::user();
-        Gate::authorize('delete', $authUser, $user );
+        Gate::authorize('delete', $authUser, $user);
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Xóa thành công.');
+    }
+
+    public function getTopBuyTimeUsers()
+    {
+        $users = User::withSum('orderDetails as total_quantity', 'quantity')
+            ->orderByDesc('total_quantity')
+            ->paginate(10);
+
+        return view('users.top_buy_time', compact('users'));
     }
 }
