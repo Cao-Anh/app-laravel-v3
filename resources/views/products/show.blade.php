@@ -25,7 +25,7 @@
             </tr>
             <tr>
                 <th>Giá:</th>
-                <td>{{ number_format($product->price, 0, ',', '.') }} VNĐ</td>
+                <td>${{ number_format($product->price, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Mô tả:</th>

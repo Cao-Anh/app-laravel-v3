@@ -27,7 +27,7 @@
                             @endif
                         </td>
                         <td>{{ $product->quantity }}</td>
-                        <td>{{ number_format($product->price, 0, ',', '.') }} VNĐ</td>
+                        <td>${{ number_format($product->price, 0, ',', '.') }}</td>
                         <td>{{ $product->description }}</td>
                         <td>
                             <button class="index-button"
