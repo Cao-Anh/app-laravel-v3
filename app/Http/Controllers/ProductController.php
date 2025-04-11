@@ -126,6 +126,6 @@ class ProductController extends Controller
             ->orderByDesc('total_quantity')
             ->paginate(10);
 
-        return view('products.most_purchased', compact('products'));
+        return view('products.purchased_quantity', compact('products'));
     }
 }
