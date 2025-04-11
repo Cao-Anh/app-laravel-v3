@@ -8,6 +8,7 @@
                 <tr>
                     <th>Người dùng</th>
                     <th>Email</th>
+                    <th>Tổng tiền mua</th>
                     <th>Lệnh</th>
                 </tr>
             </thead>
@@ -16,6 +17,7 @@
                     <tr>
                         <td>{{ $user->username }}</td>
                         <td>{{ $user->email }}</td>
+                        <td>${{ $user->total_spent ?? 0 }}</td>
                         <td>
                             <button class="index-button"
                                 style="background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;"

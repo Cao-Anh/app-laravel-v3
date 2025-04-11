@@ -13,6 +13,10 @@
                 <th>Email:</th>
                 <td>{{ $user->email }}</td>
             </tr>
+            <tr>
+                <th>Tổng tiền mua</th>
+                <td>${{ $user->total_spent ?? 0 }}</td>
+            </tr>
         </table>
 
         @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->id == $user->id))
