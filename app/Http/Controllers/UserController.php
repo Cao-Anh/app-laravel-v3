@@ -130,4 +130,11 @@ class UserController extends Controller
 
         return view('users.top_spend', compact('users'));
     }
+
+    public function getNoOrderUsers()
+    {
+        $users = User::doesntHave('orders')->paginate(10);
+
+        return view('users.no_orders', compact('users'));
+    }
 }
