@@ -3,6 +3,18 @@
 @section('content')
     <div class="container">
         <h1>Danh sách người dùng</h1>
+
+        <form method="GET" action="{{ route('users.top_buy_time') }}" style="margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm kiếm tên hoặc email"
+                    style="padding: 5px; width: 250px;">
+                <button type="submit"
+                    style="padding: 5px 10px; background-color: #3490dc; color: white; border: none; cursor: pointer;">
+                    Tìm
+                </button>
+            </div>
+        </form>
+        
         <table>
             <thead>
                 <tr>

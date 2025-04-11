@@ -46,7 +46,7 @@ class ProductController extends Controller
         $product->price = $request->price;
         $product->quantity = $request->quantity;
         $product->description = $request->description;
-        
+
 
         if ($request->hasFile('image')) {
             // dd($request->file('photo'));
@@ -58,12 +58,9 @@ class ProductController extends Controller
             $imageUrl = 'images/' . $imageName;
 
             $product->image = $imageUrl;
-
-            
         }
         $product->save();
         return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công.');
-
     }
 
     public function edit($id)
@@ -121,5 +118,22 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Xóa thành công.');
+    }
+
+    public function getMostPurchasedProducts()
+    {
+        $products = Product::withSum('orderDetails as total_quantity', 'quantity')
+            ->orderByDesc('total_quantity')
+            ->paginate(10);
+
+        return view('products.purchased_quantity', compact('products'));
+    }
+    public function getLeastPurchasedProducts()
+    {
+        $products = Product::withSum('orderDetails as total_quantity', 'quantity')
+            ->orderBy('total_quantity')
+            ->paginate(10);
+
+        return view('products.purchased_quantity', compact('products'));
     }
 }

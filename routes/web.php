@@ -84,6 +84,8 @@ Route::middleware('auth')->group(function () {
    
    
 
+    Route::get('products/most-purchased',[ProductController::class, 'getMostPurchasedProducts'])->name('users.purchased_quantity');
+    Route::get('products/least-purchased',[ProductController::class, 'getLeastPurchasedProducts'])->name('users.purchased_quantity');
 
     Route::resource('products', ProductController::class);
 });

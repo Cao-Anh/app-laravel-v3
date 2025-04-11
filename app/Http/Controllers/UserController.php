@@ -10,11 +10,28 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $users = User::withSum('orders as total_spent', 'total_amount')->paginate(10);
+    //     return view('users.index', compact('users'));
+    // }
+
+    public function index(Request $request)
     {
-        $users = User::paginate(10);
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orders as total_spent', 'total_amount')
+            ->paginate(10);
+
         return view('users.index', compact('users'));
     }
+
 
     public function show($id)
     {
@@ -77,21 +94,6 @@ class UserController extends Controller
 
         ]);
 
-
-        // if ($request->hasFile('photo')) {
-        //     // dd($request->file('photo'));
-        //     $file = $request->file('photo');
-
-        //     $imageName = time().'.'.$request->photo->extension();  
-
-        //     $request->photo->move(public_path('images'), $imageName);
-        //     $photoUrl= 'images/'. $imageName;
-
-        //     $user->photo = $photoUrl;
-        // }
-
-
-
         $user->update([
             'username' => $request->username,
             'email' => $request->email,
@@ -113,27 +115,51 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Xóa thành công.');
     }
 
-    public function getTopBuyTimeUsers()
+    public function getTopBuyTimeUsers(Request $request)
     {
-        $users = User::withSum('orderDetails as total_quantity', 'quantity')
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orderDetails as total_quantity', 'quantity')
             ->orderByDesc('total_quantity')
             ->paginate(10);
 
         return view('users.top_buy_time', compact('users'));
     }
 
-    public function getTopSpendUsers()
+    public function getTopSpendUsers(Request $request)
     {
-        $users = User::withSum('orders as total_spent', 'total_amount')
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orders as total_spent', 'total_amount')
             ->orderByDesc('total_spent')
             ->paginate(10);
 
         return view('users.top_spend', compact('users'));
     }
 
-    public function getNoOrderUsers()
+    public function getNoOrderUsers(Request $request)
     {
-        $users = User::doesntHave('orders')->paginate(10);
+        $search = $request->input('search');
+        
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->doesntHave('orders')->paginate(10);
 
         return view('users.index', compact('users'));
     }
