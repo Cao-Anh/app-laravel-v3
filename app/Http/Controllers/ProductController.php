@@ -128,4 +128,12 @@ class ProductController extends Controller
 
         return view('products.purchased_quantity', compact('products'));
     }
+    public function getLeastPurchasedProducts()
+    {
+        $products = Product::withSum('orderDetails as total_quantity', 'quantity')
+            ->orderBy('total_quantity')
+            ->paginate(10);
+
+        return view('products.purchased_quantity', compact('products'));
+    }
 }
