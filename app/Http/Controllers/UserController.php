@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -205,6 +206,5 @@ class UserController extends Controller
 
         return view('users.purchase_history', compact('user', 'orders'));
     }
-
 
 }

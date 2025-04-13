@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ChangePwController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -71,9 +72,7 @@ Route::post('/change-password', [ChangePwController::class, 'changePassword']);
 }
 
 Route::middleware('auth')->group(function () {
-    // Route::get('/dashboard', function () {
-    //     return view('dashboard');
-    // })->name('dashboard');
+    // user routes
     Route::get('/', [UserController::class, 'index'])->name('users.index');
     Route::get('users/top-buy-time', [UserController::class, 'getTopBuyTimeUsers'])->name('users.top_buy_time');
     Route::get('users/top-spend', [UserController::class, 'getTopSpendUsers'])->name('users.top_spend');
@@ -83,11 +82,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/{user}/purchase-history', [UserController::class, 'getPurchaseHistory'])->name('users.purchase_history');
 
     Route::resource('users', UserController::class);
-   
 
+    // product routes
     Route::get('products/most-purchased', [ProductController::class, 'getMostPurchasedProducts'])->name('products.most_purchased');
     Route::get('products/least-purchased', [ProductController::class, 'getLeastPurchasedProducts'])->name('products.least_purchased');
     Route::get('products/name-order-asc', [ProductController::class, 'sortByNameAsc'])->name('products.name_order_asc');
     Route::get('products/name-order-desc', [ProductController::class, 'sortByNameDesc'])->name('products.name_order_desc');
     Route::resource('products', ProductController::class);
+
+    // order routes
+    // routes/web.php
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::delete('/orders/delete-invalid', [OrderController::class, 'deleteInvalid'])->name('orders.deleteInvalid');
+    Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
 });
