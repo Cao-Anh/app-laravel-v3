@@ -11,7 +11,7 @@
             </tr>
             <tr>
                 <th>Hinh anh:</th>
-                <td>                 
+                <td>
                     @if (!empty($product->image))
                         <img src="{{ asset($product->image) }}" alt="Product Image" style="max-width: 150px; height: auto;">
                     @else
@@ -32,9 +32,9 @@
                 <td>{{ $product->description }}</td>
             </tr>
         </table>
-
-        @if (auth()->check() && auth()->user()->role == 'admin')
+        @can('update', auth()->user())
             <button onclick="window.location.href='{{ route('products.edit', $product->id) }}'">Chỉnh sửa</button>
-        @endif
+        @endcan
+
     </div>
 @endsection
