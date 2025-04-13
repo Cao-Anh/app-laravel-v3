@@ -7,12 +7,23 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 
 class ProductController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        $products = Product::paginate(10);
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->paginate(10);
+
         return view('products.index', compact('products'));
     }
 
@@ -120,20 +131,37 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Xóa thành công.');
     }
 
-    public function getMostPurchasedProducts()
+    public function getMostPurchasedProducts(Request $request)
     {
-        $products = Product::withSum('orderDetails as total_quantity', 'quantity')
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->withSum('orderDetails as total_quantity', 'quantity')
             ->orderByDesc('total_quantity')
             ->paginate(10);
+       
 
-        return view('products.purchased_quantity', compact('products'));
-    }
-    public function getLeastPurchasedProducts()
+            return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
+        }
+    public function getLeastPurchasedProducts(Request $request)
     {
-        $products = Product::withSum('orderDetails as total_quantity', 'quantity')
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->withSum('orderDetails as total_quantity', 'quantity')
             ->orderBy('total_quantity')
             ->paginate(10);
 
-        return view('products.purchased_quantity', compact('products'));
-    }
+            return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
+        }
 }

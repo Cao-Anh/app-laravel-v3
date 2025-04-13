@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Danh sách sản phẩm</h1>
 
-        <form method="GET" action="{{ route('users.index') }}" style="margin-bottom: 20px;">
+        <form method="GET" action="{{ route($routeName) }}" style="margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm kiếm tên hoặc email"
                     style="padding: 5px; width: 250px;">
@@ -14,7 +14,7 @@
                 </button>
             </div>
         </form>
-        
+
         <table>
             <thead>
                 <tr>
@@ -42,7 +42,7 @@
                         <td>{{ $product->quantity }}</td>
                         <td>${{ number_format($product->price, 0, ',', '.') }}</td>
                         <td>{{ $product->description }}</td>
-                        <td>{{ $product->total_quantity?? 0 }}</td>
+                        <td>{{ $product->total_quantity ?? 0 }}</td>
 
                         <td>
                             <button class="index-button"
@@ -64,19 +64,19 @@
                                 </form>
                             @endif --}}
                             @can('update', auth()->user())
-                            <button class="index-button"
-                            style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                            onclick="window.location.href='{{ route('products.edit', $product->id) }}'">Sửa</button>
+                                <button class="index-button"
+                                    style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                    onclick="window.location.href='{{ route('products.edit', $product->id) }}'">Sửa</button>
                             @endcan
                             @can('delete', auth()->user())
-                            <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="index-button"
-                                    style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</button>
-                            </form>
+                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="index-button"
+                                        style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                        onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</button>
+                                </form>
                             @endcan
                         </td>
                     </tr>
