@@ -75,17 +75,17 @@ Route::middleware('auth')->group(function () {
     //     return view('dashboard');
     // })->name('dashboard');
     Route::get('/', [UserController::class, 'index'])->name('users.index');
-    Route::get('users/top-buy-time',[UserController::class, 'getTopBuyTimeUsers'])->name('users.top_buy_time');
-    Route::get('users/top-spend',[UserController::class, 'getTopSpendUsers'])->name('users.top_spend');
-    Route::get('users/no-orders',[UserController::class, 'getNoOrderUsers'])->name('users.no_orders');
+    Route::get('users/top-buy-time', [UserController::class, 'getTopBuyTimeUsers'])->name('users.top_buy_time');
+    Route::get('users/top-spend', [UserController::class, 'getTopSpendUsers'])->name('users.top_spend');
+    Route::get('users/no-orders', [UserController::class, 'getNoOrderUsers'])->name('users.no_orders');
 
 
     Route::resource('users', UserController::class);
-   
-   
 
-    Route::get('products/most-purchased',[ProductController::class, 'getMostPurchasedProducts'])->name('users.purchased_quantity');
-    Route::get('products/least-purchased',[ProductController::class, 'getLeastPurchasedProducts'])->name('users.purchased_quantity');
+
+
+    Route::get('products/most-purchased', [ProductController::class, 'getMostPurchasedProducts'])->name('products.most_purchased');
+    Route::get('products/least-purchased', [ProductController::class, 'getLeastPurchasedProducts'])->name('products.least_purchased');
 
     Route::resource('products', ProductController::class);
 });
