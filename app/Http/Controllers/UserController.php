@@ -195,4 +195,14 @@ class UserController extends Controller
 
         return view('users.index', compact('users'));
     }
+
+    public function purchaseHistory(User $user)
+    {
+        $orders = $user->orders()
+            ->with(['orderDetails.product']) 
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('users.purchase_history', compact('user', 'orders'));
+    }
 }
