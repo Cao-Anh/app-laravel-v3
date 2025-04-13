@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Danh sách người dùng</h1>
 
-        <form method="GET" action="{{ route('users.index') }}" style="margin-bottom: 20px;">
+        <form method="GET" action="{{ route('users.top_buy_time') }}" style="margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm kiếm tên hoặc email"
                     style="padding: 5px; width: 250px;">
@@ -25,8 +25,6 @@
                 <a href="{{ route('users.top_buy_time') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">User mua hàng có số lượng nhiều nhất</a>
                 <a href="{{ route('users.top_spend') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">User mua hàng có giá trị lớn nhất</a>
                 <a href="{{ route('users.no_orders') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">User không mua hàng</a>
-                <a href="{{ route('users.name_order_asc') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sắp xếp theo tên (a->z)</a>
-                <a href="{{ route('users.name_order_desc') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sắp xếp theo tên (z->a)</a>
             </div>
         </div>
         
@@ -49,16 +47,17 @@
                 <tr>
                     <th>Người dùng</th>
                     <th>Email</th>
-                    <th>Tổng tiền mua</th>
+                    <th>Tổng SL mua</th>
                     <th>Lệnh</th>
                 </tr>
             </thead>
+
             <tbody>
                 @foreach ($users as $user)
                     <tr>
                         <td>{{ $user->username }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>${{ $user->total_spent ?? 0 }}</td>
+                        <td>{{ $user->total_quantity ?? 0 }}</td>
                         <td>
                             <button class="index-button"
                                 style="background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;"
@@ -81,6 +80,7 @@
                     </tr>
                 @endforeach
             </tbody>
+
         </table>
 
         <!-- Pagination -->

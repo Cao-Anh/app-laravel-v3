@@ -7,12 +7,23 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 
 class ProductController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        $products = Product::paginate(10);
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->paginate(10);
+
         return view('products.index', compact('products'));
     }
 
@@ -46,7 +57,7 @@ class ProductController extends Controller
         $product->price = $request->price;
         $product->quantity = $request->quantity;
         $product->description = $request->description;
-        
+
 
         if ($request->hasFile('image')) {
             // dd($request->file('photo'));
@@ -58,12 +69,9 @@ class ProductController extends Controller
             $imageUrl = 'images/' . $imageName;
 
             $product->image = $imageUrl;
-
-            
         }
         $product->save();
         return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công.');
-
     }
 
     public function edit($id)
@@ -121,5 +129,68 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Xóa thành công.');
+    }
+
+    public function getMostPurchasedProducts(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->withSum('orderDetails as total_quantity', 'quantity')
+            ->orderByDesc('total_quantity')
+            ->paginate(10);
+
+
+        return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
+    }
+    public function getLeastPurchasedProducts(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->withSum('orderDetails as total_quantity', 'quantity')
+            ->orderBy('total_quantity')
+            ->paginate(10);
+
+        return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
+    }
+    public function sortByNameAsc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->orderBy('name')->paginate(10);
+
+        return view('products.index', compact('products'));
+    }
+
+    public function sortByNameDesc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->orderByDesc('name')->paginate(10);
+
+        return view('products.index', compact('products'));
     }
 }

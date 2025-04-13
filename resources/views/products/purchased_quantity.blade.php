@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Danh sách sản phẩm</h1>
 
-        <form method="GET" action="{{ route('products.index') }}" style="margin-bottom: 20px;">
+        <form method="GET" action="{{ route($routeName) }}" style="margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm kiếm tên hoặc email"
                     style="padding: 5px; width: 250px;">
@@ -20,22 +20,24 @@
                 style="padding: 8px 12px; background-color: #6c757d; color: white; border: none; cursor: pointer;">
                 Bộ lọc
             </button>
-        
-            <div id="userFilterDropdown" style="display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.15); z-index: 100; width: 280px;">
-                <a href="{{ route('products.most_purchased') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sản phẩm được mua nhiều nhất</a>
-                <a href="{{ route('products.least_purchased') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sản phẩm được mua ít nhất</a>
-                <a href="{{ route('products.name_order_asc') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sắp xếp theo tên (a->z)</a>
-                <a href="{{ route('products.name_order_desc') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sắp xếp theo tên (z->a)</a>
 
+            <div id="userFilterDropdown"
+                style="display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.15); z-index: 100; width: 280px;">
+                <a href="{{ route('products.most_purchased') }}"
+                    style="display: block; padding: 10px; text-decoration: none; color: black;">Sản phẩm được mua nhiều
+                    nhất</a>
+                <a href="{{ route('products.least_purchased') }}"
+                    style="display: block; padding: 10px; text-decoration: none; color: black;">Sản phẩm được mua ít
+                    nhất</a>
             </div>
         </div>
-        
+
         <script>
             function toggleFilterDropdown() {
                 const dropdown = document.getElementById('userFilterDropdown');
                 dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
             }
-        
+
             document.addEventListener('click', function(event) {
                 const dropdown = document.getElementById('userFilterDropdown');
                 if (!event.target.closest('button') && !event.target.closest('#userFilterDropdown')) {
@@ -51,6 +53,7 @@
                     <th>Số lượng</th>
                     <th>Giá</th>
                     <th>Mô tả</th>
+                    <th>Số lượt mua</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
@@ -69,26 +72,41 @@
                         <td>{{ $product->quantity }}</td>
                         <td>${{ number_format($product->price, 0, ',', '.') }}</td>
                         <td>{{ $product->description }}</td>
+                        <td>{{ $product->total_quantity ?? 0 }}</td>
+
                         <td>
                             <button class="index-button"
                                 style="background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;"
                                 onclick="window.location.href='{{ route('products.show', $product->id) }}'">Xem</button>
 
+                            {{-- @if (auth()->check() && auth()->user()->role == 'admin')
+                                <button class="index-button"
+                                    style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                    onclick="window.location.href='{{ route('products.edit', $product->id) }}'">Sửa</button>
+
+                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="index-button"
+                                        style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                        onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</button>
+                                </form>
+                            @endif --}}
                             @can('update', auth()->user())
-                            <button class="index-button"
-                            style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                            onclick="window.location.href='{{ route('products.edit', $product->id) }}'">Sửa</button>
+                                <button class="index-button"
+                                    style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                    onclick="window.location.href='{{ route('products.edit', $product->id) }}'">Sửa</button>
                             @endcan
-                            
                             @can('delete', auth()->user())
-                            <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="index-button"
-                                    style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</button>
-                            </form>
+                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="index-button"
+                                        style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                        onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</button>
+                                </form>
                             @endcan
                         </td>
                     </tr>
