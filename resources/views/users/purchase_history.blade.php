@@ -16,7 +16,7 @@
                 @foreach($order->orderDetails as $detail)
                     <li>
                         {{ $detail->product->name }} - SL: {{ $detail->quantity }} - 
-                        Giá: ${{ number_format($detail->price) }} 
+                        Giá: ${{ number_format($detail->product->price) }} 
                     </li>
                 @endforeach
             </ul>
