@@ -35,7 +35,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::withSum('orders as total_spent', 'total_amount')->findOrFail($id);
         return view('users.show', compact('user'));
     }
 
