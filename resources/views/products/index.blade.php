@@ -24,6 +24,9 @@
             <div id="userFilterDropdown" style="display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.15); z-index: 100; width: 280px;">
                 <a href="{{ route('products.most_purchased') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sản phẩm được mua nhiều nhất</a>
                 <a href="{{ route('products.least_purchased') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sản phẩm được mua ít nhất</a>
+                <a href="{{ route('products.name_order_asc') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sắp xếp theo tên (a->z)</a>
+                <a href="{{ route('products.name_order_desc') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sắp xếp theo tên (z->a)</a>
+
             </div>
         </div>
         
