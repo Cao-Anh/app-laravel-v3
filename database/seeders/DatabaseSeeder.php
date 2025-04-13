@@ -45,17 +45,37 @@ class DatabaseSeeder extends Seeder
         Product::factory(100)->create();
 
         // Create 100 orders randomly assigned to users
-        Order::factory(100)->create([
-            // 'user_id' => User::inRandomOrder()->first()->id,
-            'user_id' => fn() => User::inRandomOrder()->first()->id,
+        // Create 100 orders with details and correct total_amount
+        $users = User::all();
+        $products = Product::all();
 
-        ]);
+        for ($i = 0; $i < 100; $i++) {
+            $order = Order::create([
+                'user_id' => $users->random()->id,
+                'address' => fake()->address,
+                'total_amount' => 0, // Temporary
+            ]);
 
-        // Create 100 order details, randomly assigned to orders & products
-        OrderDetail::factory(100)->create([
-            'order_id' => fn() => Order::inRandomOrder()->first()->id,
-            'product_id' => fn() => Product::inRandomOrder()->first()->id,
-        ]);
+            $totalAmount = 0;
+
+            $randomProducts = $products->random(rand(1, 4));
+            foreach ($randomProducts as $product) {
+                $quantity = rand(1, 5);
+                $subtotal = $product->price * $quantity;
+
+                OrderDetail::create([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'quantity' => $quantity,
+                    'notes' => fake()->sentence,
+                ]);
+
+                $totalAmount += $subtotal;
+            }
+
+            $order->update(['total_amount' => $totalAmount]);
+        }
+
 
 
         // Create a specific admin user
