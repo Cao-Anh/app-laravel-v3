@@ -144,10 +144,10 @@ class ProductController extends Controller
             })->withSum('orderDetails as total_quantity', 'quantity')
             ->orderByDesc('total_quantity')
             ->paginate(10);
-       
 
-            return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
-        }
+
+        return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
+    }
     public function getLeastPurchasedProducts(Request $request)
     {
         $search = $request->input('search');
@@ -162,6 +162,35 @@ class ProductController extends Controller
             ->orderBy('total_quantity')
             ->paginate(10);
 
-            return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
-        }
+        return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
+    }
+    public function sortByNameAsc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->orderBy('name')->paginate(10);
+
+        return view('products.index', compact('products'));
+    }
+
+    public function sortByNameDesc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->orderByDesc('name')->paginate(10);
+
+        return view('products.index', compact('products'));
+    }
 }

@@ -25,6 +25,8 @@
                 <a href="{{ route('users.top_buy_time') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">User mua hàng có số lượng nhiều nhất</a>
                 <a href="{{ route('users.top_spend') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">User mua hàng có giá trị lớn nhất</a>
                 <a href="{{ route('users.no_orders') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">User không mua hàng</a>
+                <a href="{{ route('users.name_order_asc') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sắp xếp theo tên (a->z)</a>
+                <a href="{{ route('users.name_order_desc') }}" style="display: block; padding: 10px; text-decoration: none; color: black;">Sắp xếp theo tên (z->a)</a>
             </div>
         </div>
         

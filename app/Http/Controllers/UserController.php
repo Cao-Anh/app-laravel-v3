@@ -152,7 +152,7 @@ class UserController extends Controller
     public function getNoOrderUsers(Request $request)
     {
         $search = $request->input('search');
-        
+
         $users = User::query()
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
@@ -162,5 +162,37 @@ class UserController extends Controller
             })->doesntHave('orders')->paginate(10);
 
         return view('users.no_orders', compact('users'));
+    }
+
+    public function sortByNameAsc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orders as total_spent', 'total_amount')
+            ->orderBy('username')->paginate(10);
+
+        return view('users.index', compact('users'));
+    }
+
+    public function sortByNameDesc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orders as total_spent', 'total_amount')
+            ->orderByDesc('username')->paginate(10);
+
+        return view('users.index', compact('users'));
     }
 }
