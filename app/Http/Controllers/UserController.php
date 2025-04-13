@@ -196,7 +196,7 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-    public function purchaseHistory(User $user)
+    public function getPurchaseHistory(User $user)
     {
         $orders = $user->orders()
             ->with(['orderDetails.product']) 
@@ -205,4 +205,6 @@ class UserController extends Controller
 
         return view('users.purchase_history', compact('user', 'orders'));
     }
+
+
 }
