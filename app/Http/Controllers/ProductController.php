@@ -13,19 +13,37 @@ class ProductController extends Controller
 {
 
     public function index(Request $request)
-    {
-        $search = $request->input('search');
+{
+    $search = $request->input('search');
+    $minPrice = $request->input('min_price');
+    $maxPrice = $request->input('max_price');
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
 
-        $products = Product::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            })->paginate(10);
+    $products = Product::query()
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        })
+        ->when($minPrice, function ($query, $minPrice) {
+            $query->where('price', '>=', $minPrice);
+        })
+        ->when($maxPrice, function ($query, $maxPrice) {
+            $query->where('price', '<=', $maxPrice);
+        })
+        ->when($startDate, function ($query, $startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        })
+        ->when($endDate, function ($query, $endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        })
+        ->latest()
+        ->paginate(10);
 
-        return view('products.index', compact('products'));
-    }
+    return view('products.index', compact('products'));
+}
 
     public function show($id)
     {
