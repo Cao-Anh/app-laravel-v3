@@ -25,7 +25,8 @@
     @endif
     <header>
         <nav>
-            <a href="{{ route('users.index') }}">Trang chủ</a> |
+            <a href="{{ route('users.index') }}">Người dùng</a> |
+            <a href="{{ route('products.index') }}">Sản phẩm</a> |
             <form style="display:inline" action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" style="all: unset ;cursor: pointer;display: inline;">Đăng xuất</button>
