@@ -68,4 +68,9 @@ class User extends Authenticatable
             'id'             // Local key on orders table
         );
     }
+
+    public function userActivity()
+    {
+        return $this->hasMany(UserActivity::class);
+    }
 }

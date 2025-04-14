@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-    // public function index()
-    // {
-    //     $users = User::withSum('orders as total_spent', 'total_amount')->paginate(10);
-    //     return view('users.index', compact('users'));
-    // }
 
     public function index(Request $request)
     {
@@ -29,6 +24,7 @@ class UserController extends Controller
                 });
             })->withSum('orders as total_spent', 'total_amount')
             ->paginate(10);
+        logActivity('View Users');
 
         return view('users.index', compact('users'));
     }
@@ -37,6 +33,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::withSum('orders as total_spent', 'total_amount')->findOrFail($id);
+        logActivity('View User', "Viewed user with ID {$id}");
         return view('users.show', compact('user'));
     }
 
@@ -44,6 +41,7 @@ class UserController extends Controller
     {
         Gate::authorize('create', User::class);
         $roles = Role::all();
+        logActivity('Create User', "Access create user");
         return view('users.create', compact('roles'));
     }
 
@@ -69,7 +67,7 @@ class UserController extends Controller
         if ($request->has('roles')) {
             $user->roles()->attach($request->roles);
         }
-
+        logActivity('Create User', "Created a user");
         return redirect()->route('users.index')->with('success', 'Tạo người dùng thành công.');
     }
 
@@ -80,7 +78,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $authUser = Auth::user();
         Gate::authorize('update', $authUser, $user);
-
+        logActivity('Edit User', "Access edit user with id: {$id}");
         return view('users.edit', compact('user'));
     }
 
@@ -101,7 +99,7 @@ class UserController extends Controller
         ]);
 
         $user->save();
-
+        logActivity('Edit User', "Edited user with ID {$id}");
         return redirect()->route('users.show', $id)->with('success', 'Cập nhật thành công.');
     }
 
@@ -113,6 +111,7 @@ class UserController extends Controller
         $authUser = Auth::user();
         Gate::authorize('delete', $authUser, $user);
         $user->delete();
+        logActivity('Delete User', "Delete user with ID {$id}");
         return redirect()->route('users.index')->with('success', 'Xóa thành công.');
     }
 
@@ -129,7 +128,7 @@ class UserController extends Controller
             })->withSum('orderDetails as total_quantity', 'quantity')
             ->orderByDesc('total_quantity')
             ->paginate(10);
-
+        logActivity('View top buy time users');
         return view('users.top_buy_time', compact('users'));
     }
 
@@ -146,7 +145,7 @@ class UserController extends Controller
             })->withSum('orders as total_spent', 'total_amount')
             ->orderByDesc('total_spent')
             ->paginate(10);
-
+        logActivity('View top spend users');
         return view('users.top_spend', compact('users'));
     }
 
@@ -161,6 +160,7 @@ class UserController extends Controller
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             })->doesntHave('orders')->paginate(10);
+        logActivity('View no order users');
 
         return view('users.no_orders', compact('users'));
     }
@@ -177,7 +177,7 @@ class UserController extends Controller
                 });
             })->withSum('orders as total_spent', 'total_amount')
             ->orderBy('username')->paginate(10);
-
+        logActivity('sort users by name asc');
         return view('users.index', compact('users'));
     }
 
@@ -193,6 +193,7 @@ class UserController extends Controller
                 });
             })->withSum('orders as total_spent', 'total_amount')
             ->orderByDesc('username')->paginate(10);
+        logActivity('sort users by name desc');
 
         return view('users.index', compact('users'));
     }
@@ -200,11 +201,11 @@ class UserController extends Controller
     public function getPurchaseHistory(User $user)
     {
         $orders = $user->orders()
-            ->with(['orderDetails.product']) 
+            ->with(['orderDetails.product'])
             ->orderByDesc('created_at')
             ->get();
+        logActivity('View purchase history', "View purchase history of user with id {$user->id}");
 
         return view('users.purchase_history', compact('user', 'orders'));
     }
-
 }
