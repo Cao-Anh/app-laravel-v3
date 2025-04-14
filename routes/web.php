@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ChangePwController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use App\Models\User;
@@ -95,4 +96,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::delete('/orders/delete-invalid', [OrderController::class, 'deleteInvalid'])->name('orders.deleteInvalid');
     Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
+
+    //log routes
+    Route::get('/logs', [UserActivityController::class, 'index'])->name('logs.index');
+    Route::get('/logs/{id}', [UserActivityController::class, 'show'])->name('logs.show');
 });
