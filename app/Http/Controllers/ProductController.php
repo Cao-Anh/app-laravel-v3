@@ -20,27 +20,7 @@ class ProductController extends Controller
     $startDate = $request->input('start_date');
     $endDate = $request->input('end_date');
 
-    $products = Product::query()
-        ->when($search, function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        })
-        ->when($minPrice, function ($query, $minPrice) {
-            $query->where('price', '>=', $minPrice);
-        })
-        ->when($maxPrice, function ($query, $maxPrice) {
-            $query->where('price', '<=', $maxPrice);
-        })
-        ->when($startDate, function ($query, $startDate) {
-            $query->whereDate('created_at', '>=', $startDate);
-        })
-        ->when($endDate, function ($query, $endDate) {
-            $query->whereDate('created_at', '<=', $endDate);
-        })
-        ->latest()
-        ->paginate(10);
+    $products = Product::query
 
     return view('products.index', compact('products'));
 }
@@ -48,6 +28,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
+        ridirect message
         return view('products.show', compact('product'));
     }
 
@@ -64,18 +45,16 @@ class ProductController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
+            
             'description' => 'require|string',
         ]);
+        // meesage 
+
+        // customize name bat dau bang tu san pham -> viet 1 class validate
 
         $product = new Product();
         $product->name = $request->name;
-        $product->price = $request->price;
-        $product->quantity = $request->quantity;
-        $product->description = $request->description;
-
+     
 
         if ($request->hasFile('image')) {
             // dd($request->file('photo'));
