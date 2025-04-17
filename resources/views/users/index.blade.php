@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h1>Danh sách người dùng</h1>
+        <h2>Danh sách người dùng</h2>
 
         <form method="GET" action="{{ route('users.index') }}" style="margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 10px;">
