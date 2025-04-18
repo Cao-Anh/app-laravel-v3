@@ -80,7 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::get('users/no-orders', [UserController::class, 'getNoOrderUsers'])->name('users.no_orders');
     Route::get('users/name-order-asc', [UserController::class, 'sortByNameAsc'])->name('users.name_order_asc');
     Route::get('users/name-order-desc', [UserController::class, 'sortByNameDesc'])->name('users.name_order_desc');
-    Route::get('/users/{user}/purchase-history', [UserController::class, 'getPurchaseHistory'])->name('users.purchase_history');
+    Route::get('/users/{id}/purchase-history', [UserController::class, 'getPurchaseHistory'])->name('users.purchase_history');
 
     Route::resource('users', UserController::class);
 
@@ -94,8 +94,16 @@ Route::middleware('auth')->group(function () {
     // order routes
     // routes/web.php
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/buy', [OrderController::class, 'buy'])->name('orders.buy');
+    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+
     Route::delete('/orders/delete-invalid', [OrderController::class, 'deleteInvalid'])->name('orders.deleteInvalid');
     Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
+    
+    
+    
+
+
 
     //log routes
     Route::get('/logs', [UserActivityController::class, 'index'])->name('logs.index');
