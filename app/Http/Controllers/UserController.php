@@ -198,13 +198,14 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-    public function getPurchaseHistory(User $user)
+    public function getPurchaseHistory($id)
     {
+        $user = User::findOrFail($id);
         $orders = $user->orders()
             ->with(['orderDetails.product'])
             ->orderByDesc('created_at')
             ->get();
-        logActivity('View purchase history', "View purchase history of user with id {$user->id}");
+        logActivity('View purchase history', "View purchase history of user with id {$id}");
 
         return view('users.purchase_history', compact('user', 'orders'));
     }

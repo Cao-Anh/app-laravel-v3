@@ -10,11 +10,21 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'image', 'price', 'quantity', 'description'
+        'name',
+        'image',
+        'price',
+        'quantity',
+        'description'
     ];
 
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);
+    }
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_details')
+            ->withPivot('quantity', 'notes')
+            ->withTimestamps();
     }
 }

@@ -30,25 +30,7 @@
             </div>
         </form>
 
-        {{-- <form action="{{ route('products.index') }}" method="GET" class="mb-4">
-            <div class="row g-2">
-                <div class="col-md-3">
-                    <input type="number" name="min_price" class="form-control" placeholder="Giá thấp nhất" value="{{ request('min_price') }}">
-                </div>
-                <div class="col-md-3">
-                    <input type="number" name="max_price" class="form-control" placeholder="Giá cao nhất" value="{{ request('max_price') }}">
-                </div>
-                <div class="col-md-3">
-                    <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
-                </div>
-                <div class="col-md-3">
-                    <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
-                </div>
-                <div class="col-md-12 mt-2">
-                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                </div>
-            </div>
-        </form> --}}
+
 
         {{-- filter dropdown --}}
         <div style="display: flex; justify-content:left; position: relative; margin-bottom: 20px; align-items:">
@@ -86,58 +68,51 @@
                 }
             });
         </script>
-        <table>
-            <thead>
-                <tr>
-                    <th>Tên sản phẩm</th>
-                    <th>Hình ảnh</th>
-                    <th>Số lượng</th>
-                    <th>Giá</th>
-                    <th>Mô tả</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="container">
+            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
                 @foreach ($products as $product)
-                    <tr>
-                        <td>{{ $product->name }}</td>
-                        <td>
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
                             @if (!empty($product->image))
-                                <img src="{{ asset($product->image) }}" alt="Product Image"
-                                    style="max-width: 150px; height: auto;">
+                                <img src="{{ asset($product->image) }}" class="card-img-top" alt="{{ $product->name }}">
                             @else
-                                <p>Không có hình ảnh</p>
+                                <div class="card-img-top bg-light d-flex justify-content-center align-items-center"
+                                    style="height: 200px;">
+                                    <span class="text-muted">Không có hình ảnh</span>
+                                </div>
                             @endif
-                        </td>
-                        <td>{{ $product->quantity }}</td>
-                        <td>${{ number_format($product->price, 0, ',', '.') }}</td>
-                        <td>{{ $product->description }}</td>
-                        <td>
-                            <button class="index-button"
-                                style="background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                                onclick="window.location.href='{{ route('products.show', $product->id) }}'">Xem</button>
 
-                            @can('update', auth()->user())
-                                <button class="index-button"
-                                    style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                                    onclick="window.location.href='{{ route('products.edit', $product->id) }}'">Sửa</button>
-                            @endcan
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $product->name }}</h5>
+                                <p class="card-text text-danger fw-bold">{{ number_format($product->price, 0, ',', '.') }}₫
+                                </p>
+                                <p class="card-text"><small class="text-muted">Còn lại: {{ $product->quantity }}</small>
+                                </p>
+                                <p class="card-text">{{ Str::limit($product->description, 60) }}</p>
+                            </div>
 
-                            @can('delete', auth()->user())
-                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                    style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="index-button"
-                                        style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                                        onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</button>
-                                </form>
-                            @endcan
-                        </td>
-                    </tr>
+                            <div class="card-footer d-flex flex-wrap justify-content-between gap-2">
+                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-success btn-sm">Xem</a>
+
+                                @can('update', auth()->user())
+                                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm">Sửa</a>
+                                @endcan
+
+                                @can('delete', auth()->user())
+                                    <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                    </form>
+                                @endcan
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
-            </tbody>
-        </table>
+            </div>
+        </div>
+
 
         <!-- Pagination -->
         {{ $products->links() }}
