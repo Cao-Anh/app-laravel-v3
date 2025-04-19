@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Danh sách sản phẩm</h1>
 
-        <form method="GET" action="{{ route('products.index') }}" style="margin-bottom: 20px;">
+        <form method="GET" action="{{ route($routeName) }}" style="margin-bottom: 20px;">
             {{-- Hàng 1: Tìm kiếm + nút --}}
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Tên hoặc mô tả sản phẩm"
@@ -88,7 +88,8 @@
                                     <h6 class="card-title">{{ $product->name }}</h6>
                                     <p class="card-text text-danger fw-bold mb-1">
                                         ${{ number_format($product->price, 0, ',', '.') }}</p>
-                                    <p class="card-text">{{ Str::limit($product->description, 30) }}</p>
+                                    <p>{{ $product->total_quantity??'0' }} lượt mua</p>
+                                    <div class="h-10"><p class="card-text">{{ Str::limit($product->description, 30) }}</p></div>
                                 </div>
                                 <a href="{{ route('products.show', $product->id) }}" class="btn btn-danger btn-sm">Mua ngay</a>
 
