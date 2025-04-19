@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Danh sách người dùng</h1>
 
-        <form method="GET" action="{{ route('users.top_spend') }}" style="margin-bottom: 20px;">
+        <form method="GET" action="{{ route('users.no_orders') }}" style="margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm kiếm tên hoặc email"
                     style="padding: 5px; width: 250px;">

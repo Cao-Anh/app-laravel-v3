@@ -13,10 +13,16 @@
                 <th>Email:</th>
                 <td>{{ $user->email }}</td>
             </tr>
+            <tr>
+                <th>Tổng tiền mua</th>
+                <td>${{ $user->total_spent ?? 0 }}</td>
+            </tr>
         </table>
-
-        @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->id == $user->id))
+        @can('update', auth()->user())
             <button onclick="window.location.href='{{ route('users.edit', $user->id) }}'">Chỉnh sửa</button>
-        @endif
+        @endcan
+        <a href="{{ route('users.purchase_history', $user->id) }}" class="text-blue-500 hover:underline">
+            Xem lịch sử mua hàng
+        </a>
     </div>
 @endsection

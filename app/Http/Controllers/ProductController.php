@@ -7,14 +7,43 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 
 class ProductController extends Controller
 {
-    public function index()
-    {
-        $products = Product::paginate(10);
-        return view('products.index', compact('products'));
-    }
+
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+    $minPrice = $request->input('min_price');
+    $maxPrice = $request->input('max_price');
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+
+    $products = Product::query()
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        })
+        ->when($minPrice, function ($query, $minPrice) {
+            $query->where('price', '>=', $minPrice);
+        })
+        ->when($maxPrice, function ($query, $maxPrice) {
+            $query->where('price', '<=', $maxPrice);
+        })
+        ->when($startDate, function ($query, $startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        })
+        ->when($endDate, function ($query, $endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        })
+        ->latest()
+        ->paginate(10);
+
+    return view('products.index', compact('products'));
+}
 
     public function show($id)
     {
@@ -120,12 +149,66 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Xóa thành công.');
     }
 
-    public function getMostPurchasedProducts()
+    public function getMostPurchasedProducts(Request $request)
     {
-        $products = Product::withSum('orderDetails as total_quantity', 'quantity')
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->withSum('orderDetails as total_quantity', 'quantity')
             ->orderByDesc('total_quantity')
             ->paginate(10);
 
-        return view('products.purchased_quantity', compact('products'));
+
+        return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
+    }
+    public function getLeastPurchasedProducts(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->withSum('orderDetails as total_quantity', 'quantity')
+            ->orderBy('total_quantity')
+            ->paginate(10);
+
+        return view('products.purchased_quantity', compact('products'))->with('routeName', Route::currentRouteName());
+    }
+    public function sortByNameAsc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->orderBy('name')->paginate(10);
+
+        return view('products.index', compact('products'));
+    }
+
+    public function sortByNameDesc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $products = Product::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })->orderByDesc('name')->paginate(10);
+
+        return view('products.index', compact('products'));
     }
 }

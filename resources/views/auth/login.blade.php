@@ -12,9 +12,9 @@
     alert({{ json_encode(session('error')) }});
 </script>
 @endif
-<div class="container">
+<div class="container ">
     <div class="login-box">
-        <h2>Màn hình đăng nhập</h2>
+        <h2 class="text-2xl font-semibold mb-2">Màn hình đăng nhập</h2>
 
         @if (session('login_error'))
             <div class="error">{{ session('login_error') }}</div>

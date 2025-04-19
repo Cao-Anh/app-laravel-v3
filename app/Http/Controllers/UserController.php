@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -10,15 +11,29 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        $users = User::paginate(10);
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orders as total_spent', 'total_amount')
+            ->paginate(10);
+        logActivity('View Users');
+
         return view('users.index', compact('users'));
     }
 
+
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::withSum('orders as total_spent', 'total_amount')->findOrFail($id);
+        logActivity('View User', "Viewed user with ID {$id}");
         return view('users.show', compact('user'));
     }
 
@@ -26,6 +41,7 @@ class UserController extends Controller
     {
         Gate::authorize('create', User::class);
         $roles = Role::all();
+        logActivity('Create User', "Access create user");
         return view('users.create', compact('roles'));
     }
 
@@ -51,7 +67,7 @@ class UserController extends Controller
         if ($request->has('roles')) {
             $user->roles()->attach($request->roles);
         }
-
+        logActivity('Create User', "Created a user");
         return redirect()->route('users.index')->with('success', 'Tạo người dùng thành công.');
     }
 
@@ -62,7 +78,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $authUser = Auth::user();
         Gate::authorize('update', $authUser, $user);
-
+        logActivity('Edit User', "Access edit user with id: {$id}");
         return view('users.edit', compact('user'));
     }
 
@@ -77,28 +93,13 @@ class UserController extends Controller
 
         ]);
 
-
-        // if ($request->hasFile('photo')) {
-        //     // dd($request->file('photo'));
-        //     $file = $request->file('photo');
-
-        //     $imageName = time().'.'.$request->photo->extension();  
-
-        //     $request->photo->move(public_path('images'), $imageName);
-        //     $photoUrl= 'images/'. $imageName;
-
-        //     $user->photo = $photoUrl;
-        // }
-
-
-
         $user->update([
             'username' => $request->username,
             'email' => $request->email,
         ]);
 
         $user->save();
-
+        logActivity('Edit User', "Edited user with ID {$id}");
         return redirect()->route('users.show', $id)->with('success', 'Cập nhật thành công.');
     }
 
@@ -110,31 +111,102 @@ class UserController extends Controller
         $authUser = Auth::user();
         Gate::authorize('delete', $authUser, $user);
         $user->delete();
+        logActivity('Delete User', "Delete user with ID {$id}");
         return redirect()->route('users.index')->with('success', 'Xóa thành công.');
     }
 
-    public function getTopBuyTimeUsers()
+    public function getTopBuyTimeUsers(Request $request)
     {
-        $users = User::withSum('orderDetails as total_quantity', 'quantity')
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orderDetails as total_quantity', 'quantity')
             ->orderByDesc('total_quantity')
             ->paginate(10);
-
+        logActivity('View top buy time users');
         return view('users.top_buy_time', compact('users'));
     }
 
-    public function getTopSpendUsers()
+    public function getTopSpendUsers(Request $request)
     {
-        $users = User::withSum('orders as total_spent', 'total_amount')
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orders as total_spent', 'total_amount')
             ->orderByDesc('total_spent')
             ->paginate(10);
-
+        logActivity('View top spend users');
         return view('users.top_spend', compact('users'));
     }
 
-    public function getNoOrderUsers()
+    public function getNoOrderUsers(Request $request)
     {
-        $users = User::doesntHave('orders')->paginate(10);
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->doesntHave('orders')->paginate(10);
+        logActivity('View no order users');
+
+        return view('users.no_orders', compact('users'));
+    }
+
+    public function sortByNameAsc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orders as total_spent', 'total_amount')
+            ->orderBy('username')->paginate(10);
+        logActivity('sort users by name asc');
+        return view('users.index', compact('users'));
+    }
+
+    public function sortByNameDesc(Request $request)
+    {
+        $search = $request->input('search');
+
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })->withSum('orders as total_spent', 'total_amount')
+            ->orderByDesc('username')->paginate(10);
+        logActivity('sort users by name desc');
 
         return view('users.index', compact('users'));
+    }
+
+    public function getPurchaseHistory($id)
+    {
+        $user = User::findOrFail($id);
+        $orders = $user->orders()
+            ->with(['orderDetails.product'])
+            ->orderByDesc('created_at')
+            ->get();
+        logActivity('View purchase history', "View purchase history of user with id {$id}");
+
+        return view('users.purchase_history', compact('user', 'orders'));
     }
 }
