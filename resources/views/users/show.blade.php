@@ -19,7 +19,7 @@
             </tr>
         </table>
         @can('update', auth()->user())
-            <button onclick="window.location.href='{{ route('users.edit', $user->id) }}'">Chỉnh sửa</button>
+            <button class="btn btn-primary btn-sm" onclick="window.location.href='{{ route('users.edit', $user->id) }}'">Chỉnh sửa</button>
         @endcan
         <a href="{{ route('users.purchase_history', $user->id) }}" class="text-blue-500 hover:underline">
             Xem lịch sử mua hàng
