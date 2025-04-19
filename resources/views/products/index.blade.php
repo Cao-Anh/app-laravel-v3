@@ -68,50 +68,56 @@
                 }
             });
         </script>
-        <div class="container">
-            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        <div class="mb-10">
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-xl-5 g-4">
                 @foreach ($products as $product)
                     <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            @if (!empty($product->image))
-                                <img src="{{ asset($product->image) }}" class="card-img-top" alt="{{ $product->name }}">
-                            @else
-                                <div class="card-img-top bg-light d-flex justify-content-center align-items-center"
-                                    style="height: 200px;">
-                                    <span class="text-muted">Không có hình ảnh</span>
+                        <a href="{{ route('products.show', $product->id) }}" class="text-decoration-none text-dark">
+                            <div class="card h-100 shadow-sm">
+                                @if (!empty($product->image))
+                                    <img src="{{ asset($product->image) }}" class="card-img-top"
+                                        alt="{{ $product->name }}">
+                                @else
+                                    <div class="card-img-top bg-light d-flex justify-content-center align-items-center"
+                                        style="height: 200px;">
+                                        <span class="text-muted">Không có hình ảnh</span>
+                                    </div>
+                                @endif
+
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ $product->name }}</h6>
+                                    <p class="card-text text-danger fw-bold mb-1">
+                                        ${{ number_format($product->price, 0, ',', '.') }}</p>
+                                    <p class="card-text">{{ Str::limit($product->description, 30) }}</p>
                                 </div>
-                            @endif
+                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-danger btn-sm">Mua ngay</a>
 
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text text-danger fw-bold">{{ number_format($product->price, 0, ',', '.') }}₫
-                                </p>
-                                <p class="card-text"><small class="text-muted">Còn lại: {{ $product->quantity }}</small>
-                                </p>
-                                <p class="card-text">{{ Str::limit($product->description, 60) }}</p>
+                                <div class="mt-2 d-flex flex-wrap justify-content-between gap-2">
+
+                                    @can('update', auth()->user())
+                                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm">Sửa</a>
+                                    @endcan
+        
+                                    @can('delete', auth()->user())
+                                        <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                            onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                        </form>
+                                    @endcan
+                                </div>
                             </div>
 
-                            <div class="card-footer d-flex flex-wrap justify-content-between gap-2">
-                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-success btn-sm">Xem</a>
+                            
+                        </a>
 
-                                @can('update', auth()->user())
-                                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm">Sửa</a>
-                                @endcan
-
-                                @can('delete', auth()->user())
-                                    <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                        onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
-                                    </form>
-                                @endcan
-                            </div>
-                        </div>
+                        
                     </div>
                 @endforeach
             </div>
         </div>
+
 
 
         <!-- Pagination -->
