@@ -10,7 +10,7 @@
             </div>
         @endif
 
-        <form action="{{ route('users.store') }}" method="POST">
+        <form action="{{ route('users.store') }}" method="POST" novalidate>
             @csrf
 
             <label for="username">Người dùng</label>
@@ -28,12 +28,18 @@
             <label for="password">Mật khẩu</label>
             <input type="password" id="password" name="password" required>
             @error('password')
-                <small>{{ $message }}</small>
+                @if (!Str::contains($message, 'confirmation'))
+                    <small>{{ $message }}</small>
+                @endif
             @enderror
 
             <label for="password_confirmation">Xác nhận mật khẩu</label>
             <input type="password" id="password_confirmation" name="password_confirmation" required>
-
+            @error('password')
+                @if (str_contains($message, 'confirmation'))
+                    <small>{{ $message }}</small>
+                @endif
+            @enderror
             <label for="roles">Vai trò</label>
             <div>
                 @foreach ($roles as $role)
