@@ -20,28 +20,11 @@ class ProductController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $products = Product::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            })
-            ->when($minPrice, function ($query, $minPrice) {
-                $query->where('price', '>=', $minPrice);
-            })
-            ->when($maxPrice, function ($query, $maxPrice) {
-                $query->where('price', '<=', $maxPrice);
-            })
-            ->when($startDate, function ($query, $startDate) {
-                $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                $query->whereDate('created_at', '<=', $endDate);
-            })
+        $products = Product::commonSearch($search,$minPrice,$maxPrice,$startDate,$endDate)
             ->withSum('orderDetails as total_quantity', 'quantity')
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->query());
 
         return view('products.index', compact('products'))->with('routeName', Route::currentRouteName());
     }
@@ -96,10 +79,6 @@ class ProductController extends Controller
     public function edit($id)
     {
         Gate::authorize('update', Product::class);
-
-        // $user = User::findOrFail($id);
-        // $authUser = Auth::user();
-        // Gate::authorize('update', $authUser, $user );
 
         $product = Product::findOrFail($id);
         return view('products.edit', compact('product'));
@@ -158,28 +137,11 @@ class ProductController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $products = Product::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            })
-            ->when($minPrice, function ($query, $minPrice) {
-                $query->where('price', '>=', $minPrice);
-            })
-            ->when($maxPrice, function ($query, $maxPrice) {
-                $query->where('price', '<=', $maxPrice);
-            })
-            ->when($startDate, function ($query, $startDate) {
-                $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                $query->whereDate('created_at', '<=', $endDate);
-            })
+        $products = Product::commonSearch($search,$minPrice,$maxPrice,$startDate,$endDate)
             ->withSum('orderDetails as total_quantity', 'quantity')
             ->orderByDesc('total_quantity')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->query());
 
 
         return view('products.index', compact('products'))->with('routeName', Route::currentRouteName());
@@ -192,28 +154,11 @@ class ProductController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $products = Product::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            })
-            ->when($minPrice, function ($query, $minPrice) {
-                $query->where('price', '>=', $minPrice);
-            })
-            ->when($maxPrice, function ($query, $maxPrice) {
-                $query->where('price', '<=', $maxPrice);
-            })
-            ->when($startDate, function ($query, $startDate) {
-                $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                $query->whereDate('created_at', '<=', $endDate);
-            })
+        $products = Product::commonSearch($search,$minPrice,$maxPrice,$startDate,$endDate)
             ->withSum('orderDetails as total_quantity', 'quantity')
             ->orderBy('total_quantity')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->query());
 
         return view('products.index', compact('products'))->with('routeName', Route::currentRouteName());
     }
@@ -227,27 +172,11 @@ class ProductController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $products = Product::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            })
-            ->when($minPrice, function ($query, $minPrice) {
-                $query->where('price', '>=', $minPrice);
-            })
-            ->when($maxPrice, function ($query, $maxPrice) {
-                $query->where('price', '<=', $maxPrice);
-            })
-            ->when($startDate, function ($query, $startDate) {
-                $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                $query->whereDate('created_at', '<=', $endDate);
-            })
+        $products = Product::commonSearch($search,$minPrice,$maxPrice,$startDate,$endDate)
             ->withSum('orderDetails as total_quantity', 'quantity')
-            ->orderBy('name')->paginate(10);
+            ->orderBy('name')
+            ->appends($request->query())
+            ->paginate(10);
 
         return view('products.index', compact('products'))->with('routeName', Route::currentRouteName());
     }
@@ -260,27 +189,11 @@ class ProductController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $products = Product::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            })
-            ->when($minPrice, function ($query, $minPrice) {
-                $query->where('price', '>=', $minPrice);
-            })
-            ->when($maxPrice, function ($query, $maxPrice) {
-                $query->where('price', '<=', $maxPrice);
-            })
-            ->when($startDate, function ($query, $startDate) {
-                $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query, $endDate) {
-                $query->whereDate('created_at', '<=', $endDate);
-            })
+        $products = Product::commonSearch($search,$minPrice,$maxPrice,$startDate,$endDate)
             ->withSum('orderDetails as total_quantity', 'quantity')
-            ->orderByDesc('name')->paginate(10);
+            ->orderByDesc('name')
+            ->appends($request->query())
+            ->paginate(10);
 
         return view('products.index', compact('products'))->with('routeName', Route::currentRouteName());
     }
