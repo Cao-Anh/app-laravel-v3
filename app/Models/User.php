@@ -94,7 +94,7 @@ class User extends Authenticatable
         return $query->withSum('orderDetails as total_quantity', 'quantity');
     }
     
-    public function scopeSortByName($query, $direction = 'asc')
+    public function scopeSortByName($query, $direction)
     {
         return $query->orderBy('username', $direction);
     }

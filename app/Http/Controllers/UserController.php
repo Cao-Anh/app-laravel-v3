@@ -16,16 +16,6 @@ class UserController extends Controller
     {
         $search = $request->input('search');
 
-        // $users = User::query()
-        //     ->when($search, function ($query, $search) {
-        //         $query->where(function ($q) use ($search) {
-        //             $q->where('username', 'like', "%{$search}%")
-        //                 ->orWhere('email', 'like', "%{$search}%");
-        //         });
-        //     })->withSum('orders as total_spent', 'total_amount')
-        //     ->paginate(10);
-        // logActivity('View Users');
-
         $users = User::commonSearch($search)
             ->withOrderStats()
             ->latest()
@@ -38,7 +28,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::withSum('orders as total_spent', 'total_amount')->findOrFail($id);
+        $user = User::withOrderStats()->findOrFail($id);
         logActivity('View User', "Viewed user with ID {$id}");
         return view('users.show', compact('user'));
     }
@@ -82,8 +72,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $authUser = Auth::user();
-        Gate::authorize('update', $authUser, $user);
+        Gate::authorize('update', $user);
         logActivity('Edit User', "Access edit user with id: {$id}");
         return view('users.edit', compact('user'));
     }
@@ -91,8 +80,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $authUser = Auth::user();
-        Gate::authorize('update', $authUser, $user);
+        Gate::authorize('update', $user);
         $request->validate([
             'username' => 'required|string|min:3|max:8',
             'email' => 'required|email|unique:users,email,' . $id,
@@ -114,8 +102,7 @@ class UserController extends Controller
     {
 
         $user = User::findOrFail($id);
-        $authUser = Auth::user();
-        Gate::authorize('delete', $authUser, $user);
+        Gate::authorize('delete', $user);
         $user->delete();
         logActivity('Delete User', "Delete user with ID {$id}");
         return redirect()->route('users.index')->with('success', 'Xóa thành công.');
@@ -125,15 +112,11 @@ class UserController extends Controller
     {
         $search = $request->input('search');
 
-        $users = User::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('username', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })->withSum('orderDetails as total_quantity', 'quantity')
+        $users = User::commonSearch($search)
+            ->withOrderQuantityStats()
             ->orderByDesc('total_quantity')
             ->paginate(10);
+
         logActivity('View top buy time users');
         return view('users.top_buy_time', compact('users'));
     }
@@ -142,15 +125,11 @@ class UserController extends Controller
     {
         $search = $request->input('search');
 
-        $users = User::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('username', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })->withSum('orders as total_spent', 'total_amount')
+        $users = User::commonSearch($search)
+            ->withOrderStats()
             ->orderByDesc('total_spent')
             ->paginate(10);
+
         logActivity('View top spend users');
         return view('users.top_spend', compact('users'));
     }
@@ -159,13 +138,8 @@ class UserController extends Controller
     {
         $search = $request->input('search');
 
-        $users = User::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('username', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })->doesntHave('orders')->paginate(10);
+        $users = User::commonSearch($search)
+            ->doesntHave('orders')->paginate(10);
         logActivity('View no order users');
 
         return view('users.no_orders', compact('users'));
@@ -175,14 +149,11 @@ class UserController extends Controller
     {
         $search = $request->input('search');
 
-        $users = User::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('username', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })->withSum('orders as total_spent', 'total_amount')
-            ->orderBy('username')->paginate(10);
+        $users = User::commonSearch($search)
+        ->withOrderStats()
+        ->sortByName('asc')
+        ->paginate(10);
+
         logActivity('sort users by name asc');
         return view('users.index', compact('users'));
     }
@@ -191,14 +162,11 @@ class UserController extends Controller
     {
         $search = $request->input('search');
 
-        $users = User::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('username', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })->withSum('orders as total_spent', 'total_amount')
-            ->orderByDesc('username')->paginate(10);
+        $users = User::commonSearch($search)
+        ->withOrderStats()
+        ->sortByName('desc')
+        ->paginate(10);
+        
         logActivity('sort users by name desc');
 
         return view('users.index', compact('users'));
