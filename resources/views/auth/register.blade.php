@@ -8,7 +8,7 @@
             <div>{{ session('register_error') }}</div>
         @endif
 
-        <form method="POST" action="{{ route('register') }}">
+        <form method="POST" action="{{ route('register') }}" novalidate>
             @csrf
 
             <label for="username">Tên đăng nhập:</label>

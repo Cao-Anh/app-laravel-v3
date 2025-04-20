@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Models\Order;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -43,27 +44,23 @@ class UserController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
         Gate::authorize('create', User::class);
 
-        $request->validate([
-            'username' => 'required|string|min:3|max:8|unique:users,username',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-            'roles' => 'array|exists:roles,id'
+        $validated = $request->validated();
+
+        $user = User::create([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
         ]);
 
-        $user = new User();
-        $user->username = $request->username;
-        $user->email = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->save();
-
         // Attach roles
-        if ($request->has('roles')) {
-            $user->roles()->attach($request->roles);
+        if (isset($validated['roles'])) {
+            $user->roles()->attach($validated['roles']);
         }
+
         logActivity('Create User', "Created a user");
         return redirect()->route('users.index')->with('success', 'Tạo người dùng thành công.');
     }
