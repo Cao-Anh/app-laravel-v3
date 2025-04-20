@@ -19,7 +19,8 @@ class UserController extends Controller
         $users = User::commonSearch($search)
             ->withOrderStats()
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->query());
         logActivity('View Users');
 
         return view('users.index', compact('users'));
@@ -115,7 +116,8 @@ class UserController extends Controller
         $users = User::commonSearch($search)
             ->withOrderQuantityStats()
             ->orderByDesc('total_quantity')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->query());
 
         logActivity('View top buy time users');
         return view('users.top_buy_time', compact('users'));
@@ -128,7 +130,8 @@ class UserController extends Controller
         $users = User::commonSearch($search)
             ->withOrderStats()
             ->orderByDesc('total_spent')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->query());
 
         logActivity('View top spend users');
         return view('users.top_spend', compact('users'));
@@ -139,7 +142,9 @@ class UserController extends Controller
         $search = $request->input('search');
 
         $users = User::commonSearch($search)
-            ->doesntHave('orders')->paginate(10);
+            ->doesntHave('orders')
+            ->paginate(10)
+            ->appends($request->query());
         logActivity('View no order users');
 
         return view('users.no_orders', compact('users'));
@@ -152,7 +157,8 @@ class UserController extends Controller
         $users = User::commonSearch($search)
         ->withOrderStats()
         ->sortByName('asc')
-        ->paginate(10);
+        ->paginate(10)
+        ->appends($request->query());
 
         logActivity('sort users by name asc');
         return view('users.index', compact('users'));
@@ -165,7 +171,8 @@ class UserController extends Controller
         $users = User::commonSearch($search)
         ->withOrderStats()
         ->sortByName('desc')
-        ->paginate(10);
+        ->paginate(10)
+        ->appends($request->query());
         
         logActivity('sort users by name desc');
 
