@@ -16,13 +16,19 @@ class UserController extends Controller
     {
         $search = $request->input('search');
 
-        $users = User::query()
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('username', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })->withSum('orders as total_spent', 'total_amount')
+        // $users = User::query()
+        //     ->when($search, function ($query, $search) {
+        //         $query->where(function ($q) use ($search) {
+        //             $q->where('username', 'like', "%{$search}%")
+        //                 ->orWhere('email', 'like', "%{$search}%");
+        //         });
+        //     })->withSum('orders as total_spent', 'total_amount')
+        //     ->paginate(10);
+        // logActivity('View Users');
+
+        $users = User::commonSearch($search)
+            ->withOrderStats()
+            ->latest()
             ->paginate(10);
         logActivity('View Users');
 
