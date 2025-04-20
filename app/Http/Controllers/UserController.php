@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\Order;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -75,19 +76,17 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
+
         $user = User::findOrFail($id);
         Gate::authorize('update', $user);
-        $request->validate([
-            'username' => 'required|string|min:3|max:8',
-            'email' => 'required|email|unique:users,email,' . $id,
 
-        ]);
+        $validated = $request->validated();
 
         $user->update([
-            'username' => $request->username,
-            'email' => $request->email,
+            'username' => $validated['username'],
+            'email' => $validated['email'],
         ]);
 
         $user->save();
@@ -152,10 +151,10 @@ class UserController extends Controller
         $search = $request->input('search');
 
         $users = User::commonSearch($search)
-        ->withOrderStats()
-        ->sortByName('asc')
-        ->paginate(10)
-        ->appends($request->query());
+            ->withOrderStats()
+            ->sortByName('asc')
+            ->paginate(10)
+            ->appends($request->query());
 
         logActivity('sort users by name asc');
         return view('users.index', compact('users'));
@@ -166,11 +165,11 @@ class UserController extends Controller
         $search = $request->input('search');
 
         $users = User::commonSearch($search)
-        ->withOrderStats()
-        ->sortByName('desc')
-        ->paginate(10)
-        ->appends($request->query());
-        
+            ->withOrderStats()
+            ->sortByName('desc')
+            ->paginate(10)
+            ->appends($request->query());
+
         logActivity('sort users by name desc');
 
         return view('users.index', compact('users'));
