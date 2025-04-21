@@ -93,7 +93,7 @@ class ProductController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
-            'description' => 'require|string',
+            'description' => 'required|string',
         ]);
         $product = Product::findOrFail($id);
 
