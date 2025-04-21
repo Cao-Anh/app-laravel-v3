@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -18,6 +20,36 @@ class UserRepository implements UserRepositoryInterface
             ->paginate(10)
             ->appends($request->query());
     }
+
+    public function store(StoreUserRequest $request): void
+    {
+        $validated = $request->validated();
+
+        $user = User::create([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+        ]);
+
+        // Attach roles
+        if (isset($validated['roles'])) {
+            $user->roles()->attach($validated['roles']);
+        }
+    }
+
+    public function update(UpdateUserRequest $request, User $user): void
+    {
+        $validated = $request->validated();
+
+        $user->update([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+        ]);
+
+        $user->save();
+    }
+
+
 
     public function getTopBuyers(Request $request): Paginator
     {
@@ -60,8 +92,8 @@ class UserRepository implements UserRepositoryInterface
             ->paginate(10)
             ->appends($request->query());
     }
-    public function getUserWithStats(int $id, User $user):Collection
-    {  
+    public function getUserWithStats(int $id, User $user): Collection
+    {
         return $user->orders()
             ->with(['orderDetails.product'])
             ->orderByDesc('created_at')
