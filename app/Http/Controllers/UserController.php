@@ -29,10 +29,11 @@ class UserController extends Controller
     }
 
 
-    public function show($id)
+    public function show($user)
     {
-        $user = User::withOrderStats()->findOrFail($id);
-        logActivity('View User', "Viewed user with ID {$id}");
+        $user = User::withOrderStats()->findOrFail($user);
+        logActivity('View User', "Viewed user with ID {$user->id}");
+
         return view('users.show', compact('user'));
     }
 
@@ -56,32 +57,27 @@ class UserController extends Controller
 
 
 
-    public function edit($id)
+    public function edit(User $user)
     {
-        $user = User::findOrFail($id);
         Gate::authorize('update', $user);
-        logActivity('Edit User', "Access edit user with id: {$id}");
+        logActivity('Edit User', "Access edit user with id: {$user->id}");
         return view('users.edit', compact('user'));
     }
 
-    public function update(UpdateUserRequest $request, $id)
+    public function update(UpdateUserRequest $request,User $user)
     {
-
-        $user = User::findOrFail($id);
         Gate::authorize('update', $user);
         $this->userRepository->update($request,$user);
         
-        logActivity('Edit User', "Edited user with ID {$id}");
-        return redirect()->route('users.show', $id)->with('success', 'Cập nhật thành công.');
+        logActivity('Edit User', "Edited user with ID {$user->id}");
+        return redirect()->route('users.show', $user->id)->with('success', 'Cập nhật thành công.');
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(User $user)
     {
-
-        $user = User::findOrFail($id);
         Gate::authorize('delete', $user);
         $user->delete();
-        logActivity('Delete User', "Delete user with ID {$id}");
+        logActivity('Delete User', "Delete user with ID {$user->id}");
         return redirect()->route('users.index')->with('success', 'Xóa thành công.');
     }
 

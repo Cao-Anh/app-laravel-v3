@@ -12,7 +12,7 @@ class UpdateUserRequest extends BaseUserRequest
     public function rules(): array
     {
         return array_merge($this->baseRules(), [
-            'email' => 'required|email|unique:users,email,' . $this->route('user'),
+            'email' => 'required|email|unique:users,email,' . $this->route('user')->id,
             'password' => 'sometimes|nullable|string|min:5|max:9|regex:/[A-Z]/|confirmed',
         ]);
     }
