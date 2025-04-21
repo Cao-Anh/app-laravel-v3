@@ -106,13 +106,8 @@ class UserController extends Controller
 
     public function getTopBuyTimeUsers(Request $request)
     {
-        $search = $request->input('search');
-
-        $users = User::commonSearch($search)
-            ->withOrderQuantityStats()
-            ->orderByDesc('total_quantity')
-            ->paginate(10)
-            ->appends($request->query());
+        
+        $users = $this->userRepository->getTopBuyers($request);
 
         logActivity('View top buy time users');
         return view('users.top_buy_time', compact('users'));
@@ -120,13 +115,7 @@ class UserController extends Controller
 
     public function getTopSpendUsers(Request $request)
     {
-        $search = $request->input('search');
-
-        $users = User::commonSearch($search)
-            ->withOrderStats()
-            ->orderByDesc('total_spent')
-            ->paginate(10)
-            ->appends($request->query());
+        $users = $this->userRepository->getTopSpenders($request);
 
         logActivity('View top spend users');
         return view('users.top_spend', compact('users'));
@@ -134,12 +123,8 @@ class UserController extends Controller
 
     public function getNoOrderUsers(Request $request)
     {
-        $search = $request->input('search');
+        $users = $this->userRepository->getInactiveUsers($request);
 
-        $users = User::commonSearch($search)
-            ->doesntHave('orders')
-            ->paginate(10)
-            ->appends($request->query());
         logActivity('View no order users');
 
         return view('users.no_orders', compact('users'));
@@ -147,13 +132,8 @@ class UserController extends Controller
 
     public function sortByNameAsc(Request $request)
     {
-        $search = $request->input('search');
+        $users = $this->userRepository->sortByNameAsc($request);
 
-        $users = User::commonSearch($search)
-            ->withOrderStats()
-            ->sortByName('asc')
-            ->paginate(10)
-            ->appends($request->query());
 
         logActivity('sort users by name asc');
         return view('users.index', compact('users'));
@@ -161,15 +141,8 @@ class UserController extends Controller
 
     public function sortByNameDesc(Request $request)
     {
-        $search = $request->input('search');
+        $users = $this->userRepository->sortByNameDesc($request);
 
-        $users = User::commonSearch($search)
-            ->withOrderStats()
-            ->sortByName('desc')
-            ->paginate(10)
-            ->appends($request->query());
-
-        logActivity('sort users by name desc');
 
         return view('users.index', compact('users'));
     }
@@ -177,10 +150,9 @@ class UserController extends Controller
     public function getPurchaseHistory($id)
     {
         $user = User::findOrFail($id);
-        $orders = $user->orders()
-            ->with(['orderDetails.product'])
-            ->orderByDesc('created_at')
-            ->get();
+        
+        $orders = $this->userRepository->getUserWithStats($id, $user);
+
         logActivity('View purchase history', "View purchase history of user with id {$id}");
 
         return view('users.purchase_history', compact('user', 'orders'));

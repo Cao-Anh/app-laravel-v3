@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class UserRepository implements UserRepositoryInterface
@@ -12,37 +13,60 @@ class UserRepository implements UserRepositoryInterface
     public function getPaginatedUsers(Request $request): Paginator
     {
         return User::commonSearch($request->search)
-        ->withOrderStats()
-        ->latest()
-        ->paginate(10)
-        ->appends($request->query());
+            ->withOrderStats()
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query());
     }
 
-    // public function getTopSpenders(string $search): Paginator
-    // {
-    //     return User::commonSearch($search)
-    //         ->withOrderStats()
-    //         ->orderByDesc('total_spent')
-    //         ->paginate(10);
-    // }
-    // public function getTopBuyers(string $search): Paginator
-    // { 
-    //     return User::commonSearch($search)
-    //         ->withOrderStats()
-    //         ->orderByDesc('total_spent')
-    //         ->paginate(10);
-    // }
-    // public function getInactiveUsers(string $search): Paginator
-    // {
-    //     return User::commonSearch($search)
-    //         ->withOrderStats()
-    //         ->orderByDesc('total_spent')
-    //         ->paginate(10);
-    // }
-    // public function getUserWithStats(int $userId): \App\Models\User
-    // {
+    public function getTopBuyers(Request $request): Paginator
+    {
+        return  User::commonSearch($request->search)
+            ->withOrderQuantityStats()
+            ->orderByDesc('total_quantity')
+            ->paginate(10)
+            ->appends($request->query());
+    }
+    public function getTopSpenders(Request $request): Paginator
+    {
+        return User::commonSearch($request->search)
+            ->withOrderStats()
+            ->orderByDesc('total_spent')
+            ->paginate(10)
+            ->appends($request->query());
+    }
+    public function getInactiveUsers(Request $request): Paginator
+    {
+        return User::commonSearch($request->search)
+            ->doesntHave('orders')
+            ->paginate(10)
+            ->appends($request->query());
+    }
 
-    // }
+    public function sortByNameAsc(Request $request): Paginator
+    {
+        return User::commonSearch($request->search)
+            ->withOrderStats()
+            ->sortByName('asc')
+            ->paginate(10)
+            ->appends($request->query());
+    }
+
+    public function sortByNameDesc(Request $request): Paginator
+    {
+        return User::commonSearch($request->search)
+            ->withOrderStats()
+            ->sortByName('desc')
+            ->paginate(10)
+            ->appends($request->query());
+    }
+    public function getUserWithStats(int $id, User $user):Collection
+    {  
+        return $user->orders()
+            ->with(['orderDetails.product'])
+            ->orderByDesc('created_at')
+            ->get();
+    }
 
 
 
