@@ -6,10 +6,10 @@ use App\Models\User;
 
 class StoreUserRequest extends BaseUserRequest
 {
-    public function authorize(): bool
-    {
-        return $this->user()->can('create', User::class);
-    }
+    // public function authorize(): bool
+    // {
+    //     return $this->user()->can('create', User::class);
+    // }
 
     public function rules(): array
     {

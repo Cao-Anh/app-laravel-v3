@@ -76,45 +76,23 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
-    // public function update(UpdateUserRequest $request, $id)
-    // {
-
-    //     $user = User::findOrFail($id);
-    //     Gate::authorize('update', $user);
-
-    //     $validated = $request->validated();
-
-    //     $user->update([
-    //         'username' => $validated['username'],
-    //         'email' => $validated['email'],
-    //     ]);
-
-    //     $user->save();
-    //     logActivity('Edit User', "Edited user with ID {$id}");
-    //     return redirect()->route('users.show', $id)->with('success', 'Cập nhật thành công.');
-    // }
-
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
+
         $user = User::findOrFail($id);
         Gate::authorize('update', $user);
-        $request->validate([
-            'username' => 'required|string|min:3|max:8',
-            'email' => 'required|email|unique:users,email,' . $id,
 
-        ]);
+        $validated = $request->validated();
 
         $user->update([
-            'username' => $request->username,
-            'email' => $request->email,
+            'username' => $validated['username'],
+            'email' => $validated['email'],
         ]);
 
         $user->save();
         logActivity('Edit User', "Edited user with ID {$id}");
         return redirect()->route('users.show', $id)->with('success', 'Cập nhật thành công.');
     }
-
-
 
     public function destroy(Request $request, $id)
     {
