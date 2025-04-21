@@ -49,19 +49,7 @@ class UserController extends Controller
     {
         Gate::authorize('create', User::class);
 
-        $validated = $request->validated();
-
-        $user = User::create([
-            'username' => $validated['username'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-        ]);
-
-        // Attach roles
-        if (isset($validated['roles'])) {
-            $user->roles()->attach($validated['roles']);
-        }
-
+        $this->userRepository->store($request);
         logActivity('Create User', "Created a user");
         return redirect()->route('users.index')->with('success', 'Tạo người dùng thành công.');
     }
@@ -81,15 +69,8 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
         Gate::authorize('update', $user);
-
-        $validated = $request->validated();
-
-        $user->update([
-            'username' => $validated['username'],
-            'email' => $validated['email'],
-        ]);
-
-        $user->save();
+        $this->userRepository->update($request,$user);
+        
         logActivity('Edit User', "Edited user with ID {$id}");
         return redirect()->route('users.show', $id)->with('success', 'Cập nhật thành công.');
     }
