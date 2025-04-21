@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Interfaces\UserRepositoryInterface;
 use App\Models\Order;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -13,16 +14,15 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private UserRepositoryInterface $userRepository,
+        // private UserService $userService
+    ) {}
 
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $users = $this->userRepository->getPaginatedUsers($request);
 
-        $users = User::commonSearch($search)
-            ->withOrderStats()
-            ->latest()
-            ->paginate(10)
-            ->appends($request->query());
         logActivity('View Users');
 
         return view('users.index', compact('users'));
