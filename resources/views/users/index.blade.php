@@ -62,13 +62,13 @@
                         <td>
                             <button class="index-button"
                                 style="background-color: green; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                                onclick="window.location.href='{{ route('users.show', $user->id) }}'">Xem</button>
+                                onclick="window.location.href='{{ route('users.show', $user) }}'">Xem</button>
                             @can('update', auth()->user())
                                 <button class="index-button"
                                     style="background-color: blue; color: white; border: none; padding: 5px 10px; cursor: pointer;"
                                     onclick="window.location.href='{{ route('users.edit', $user->id) }}'">Sửa</button>
                             @endcan
-                            @can('update', auth()->user())
+                            @can('delete', auth()->user())
                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')

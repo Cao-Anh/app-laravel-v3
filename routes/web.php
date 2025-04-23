@@ -80,8 +80,8 @@ Route::middleware('auth')->group(function () {
     Route::get('users/no-orders', [UserController::class, 'getNoOrderUsers'])->name('users.no_orders');
     Route::get('users/name-order-asc', [UserController::class, 'sortByNameAsc'])->name('users.name_order_asc');
     Route::get('users/name-order-desc', [UserController::class, 'sortByNameDesc'])->name('users.name_order_desc');
-    Route::get('/users/{id}/purchase-history', [UserController::class, 'getPurchaseHistory'])->name('users.purchase_history');
-
+    Route::get('/users/{user}/purchase-history', [UserController::class, 'getPurchaseHistory'])->name('users.purchase_history');
+   
     Route::resource('users', UserController::class);
 
     // product routes

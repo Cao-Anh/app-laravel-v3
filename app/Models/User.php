@@ -73,4 +73,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserActivity::class);
     }
+
+    public function scopeCommonSearch ($query, $search)
+    {
+        return $query->when($search, function($q) use ($search) {
+            $q->where(function($query) use ($search) {
+                $query->where('username', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+            });
+        });
+    }
+
+    public function scopeWithOrderStats($query)
+    {
+        return $query->withSum('orders as total_spent', 'total_amount');
+    }
+
+    public function scopeWithOrderQuantityStats($query)
+    {
+        return $query->withSum('orderDetails as total_quantity', 'quantity');
+    }
+    
+    public function scopeSortByName($query, $direction)
+    {
+        return $query->orderBy('username', $direction);
+    }
 }
