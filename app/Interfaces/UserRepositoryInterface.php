@@ -20,5 +20,6 @@ interface UserRepositoryInterface
     public function getInactiveUsers(Request $request): Paginator;
     public function sortByNameAsc(Request $request): Paginator;
     public function sortByNameDesc(Request $request): Paginator;
-    public function getUserWithStats(int $id, User $user):Collection;
+    public function getUserWithStats( User $user):Collection;
+
 }

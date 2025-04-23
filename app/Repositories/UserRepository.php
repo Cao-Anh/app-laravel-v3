@@ -92,7 +92,8 @@ class UserRepository implements UserRepositoryInterface
             ->paginate(10)
             ->appends($request->query());
     }
-    public function getUserWithStats(int $id, User $user): Collection
+    
+    public function getUserWithStats(User $user): Collection
     {
         return $user->orders()
             ->with(['orderDetails.product'])
