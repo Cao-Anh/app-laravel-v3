@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
+
     public function __construct(
         private UserRepositoryInterface $userRepository,
         // private UserService $userService
@@ -90,6 +91,9 @@ class UserController extends Controller
         return view('users.top_buy_time', compact('users'));
     }
 
+    /**
+     * 
+     */
     public function getTopSpendUsers(Request $request)
     {
         $users = $this->userRepository->getTopSpenders($request);
@@ -124,13 +128,11 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-    public function getPurchaseHistory($id)
-    {
-        $user = User::findOrFail($id);
-        
-        $orders = $this->userRepository->getUserWithStats($id, $user);
+    public function getPurchaseHistory(User $user)
+    {      
+        $orders = $this->userRepository->getUserWithStats($user);
 
-        logActivity('View purchase history', "View purchase history of user with id {$id}");
+        logActivity('View purchase history', "View purchase history of user with id {$user->id}");
 
         return view('users.purchase_history', compact('user', 'orders'));
     }
